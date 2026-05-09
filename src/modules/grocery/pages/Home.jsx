@@ -1,8 +1,10 @@
 import React from "react";
 import HeroSection from "../components/HeroSection";
+import { useNavigate } from "react-router-dom";
 // import HeroSection from "./HeroSection";
 
 function Home() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white overflow-x-hidden">
       
@@ -78,7 +80,7 @@ function Home() {
           delivered instantly.
         </p>
 
-        <button className="mt-8 bg-white text-green-700 hover:bg-green-100 px-8 py-4 rounded-full font-semibold shadow-lg transition-all duration-300">
+        <button onClick={()=>navigate("/all-products")} className="mt-8 bg-white text-green-700 hover:bg-green-100 px-8 py-4 rounded-full font-semibold shadow-lg transition-all duration-300">
           Explore Products
         </button>
       </section>

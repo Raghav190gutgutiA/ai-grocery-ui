@@ -1,5 +1,3 @@
-// src/modules/auth/pages/AuthPage.jsx
-
 import React, { useState } from "react";
 
 import { motion, AnimatePresence } from "framer-motion";
@@ -8,10 +6,8 @@ import {
   Mail,
   Lock,
   User,
-  Phone,
   ArrowRight,
   ShoppingBag,
-  Send,
 } from "lucide-react";
 
 import {
@@ -20,29 +16,22 @@ import {
   Link,
 } from "react-router-dom";
 
-
 import {
   loginUser,
   registerUser,
 } from "../api/authApi";
-import AnimatedButton from "../../shared/components/AnimatedButton";
 
 function AuthPage() {
+
   const location = useLocation();
 
   const navigate = useNavigate();
-
-  const isForgotRoute =
-    location.pathname === "/forgot-password";
 
   const [isLogin, setIsLogin] = useState(
     location.pathname === "/login"
   );
 
   const [loading, setLoading] = useState(false);
-
-  const [forgotEmail, setForgotEmail] =
-    useState("");
 
   const [loginData, setLoginData] = useState({
     email: "",
@@ -54,13 +43,15 @@ function AuthPage() {
       name: "",
       email: "",
       password: "",
-      phone: "",
+      role: "user",
     });
 
   const handleLogin = async (e) => {
+
     e.preventDefault();
 
     try {
+
       setLoading(true);
 
       const payload = {
@@ -80,26 +71,40 @@ function AuthPage() {
         JSON.stringify(response.user)
       );
 
-      navigate("/");
+      navigate(
+        response.user.role === "admin"
+          ? "/admin"
+          : "/"
+      );
+
     } catch (error) {
+
       console.log(
         error.response?.data || error.message
       );
+
     } finally {
       setLoading(false);
     }
   };
 
   const handleRegister = async (e) => {
+
     e.preventDefault();
 
     try {
+
       setLoading(true);
 
       const payload = {
         name: registerData.name,
         email: registerData.email,
         password: registerData.password,
+
+        role:
+          registerData.role === "seller"
+            ? "admin"
+            : "user",
       };
 
       const response = await registerUser(payload);
@@ -114,31 +119,18 @@ function AuthPage() {
         JSON.stringify(response.user)
       );
 
-      navigate("/");
+      navigate(
+        response.user.role === "admin"
+          ? "/admin"
+          : "/"
+      );
+
     } catch (error) {
+
       console.log(
         error.response?.data || error.message
       );
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const handleForgotPassword = async (e) => {
-    e.preventDefault();
-
-    try {
-      setLoading(true);
-
-      console.log({
-        email: forgotEmail,
-      });
-
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
-    } catch (error) {
-      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -161,6 +153,7 @@ function AuthPage() {
       py-10
     "
     >
+
       <div className="absolute top-[-120px] left-[-120px] w-[450px] h-[450px] bg-green-500/20 rounded-full blur-3xl" />
 
       <div className="absolute bottom-[-120px] right-[-120px] w-[450px] h-[450px] bg-emerald-400/10 rounded-full blur-3xl" />
@@ -181,6 +174,7 @@ function AuthPage() {
         lg:grid-cols-2
       "
       >
+
         <motion.div
           initial={{ opacity: 0, x: -80 }}
           animate={{ opacity: 1, x: 0 }}
@@ -198,7 +192,9 @@ function AuthPage() {
           to-transparent
         "
         >
+
           <div className="relative z-10">
+
             <div
               className="
               w-20
@@ -220,17 +216,17 @@ function AuthPage() {
 
             <p className="text-green-100/90 text-xl mt-6 leading-relaxed max-w-lg">
               Smart grocery shopping experience with
-              beautiful UI, fast delivery and premium
-              products at your fingertips.
+              premium UI and lightning-fast delivery.
             </p>
           </div>
 
           <div className="space-y-5">
+
             <div className="flex items-center gap-4">
               <div className="w-4 h-4 rounded-full bg-green-400" />
 
               <p className="text-white text-lg">
-                Lightning Fast Delivery
+                Fast Delivery
               </p>
             </div>
 
@@ -246,7 +242,7 @@ function AuthPage() {
               <div className="w-4 h-4 rounded-full bg-green-400" />
 
               <p className="text-white text-lg">
-                Secure Payments & Checkout
+                Secure Payments
               </p>
             </div>
           </div>
@@ -265,16 +261,13 @@ function AuthPage() {
           lg:p-16
         "
         >
+
           <div className="w-full max-w-xl">
+
             <div className="text-center">
+
               <motion.h1
-                key={
-                  isForgotRoute
-                    ? "forgot"
-                    : isLogin
-                    ? "login"
-                    : "register"
-                }
+                key={isLogin ? "login" : "register"}
                 initial={{
                   opacity: 0,
                   y: -20,
@@ -289,139 +282,61 @@ function AuthPage() {
                 text-white
               "
               >
-                {isForgotRoute
-                  ? "Forgot Password"
-                  : isLogin
+                {isLogin
                   ? "Welcome Back"
                   : "Create Account"}
               </motion.h1>
 
               <p className="text-green-100 mt-5 text-lg">
-                {isForgotRoute
-                  ? "Reset your password securely"
-                  : isLogin
+                {isLogin
                   ? "Login to continue shopping"
                   : "Join Snapcart today"}
               </p>
             </div>
 
-            {!isForgotRoute && (
-              <div className="flex bg-white/5 p-2 rounded-2xl mt-10 border border-white/10">
-                <button
-                  onClick={() => setIsLogin(true)}
-                  className={`
-                    flex-1 py-4 rounded-xl
-                    font-bold text-lg transition-all
+            <div className="flex bg-white/5 p-2 rounded-2xl mt-10 border border-white/10">
 
-                    ${
-                      isLogin
-                        ? "bg-white text-green-700"
-                        : "text-white"
-                    }
-                  `}
-                >
-                  Login
-                </button>
+              <button
+                onClick={() => setIsLogin(true)}
+                className={`
+                  flex-1 py-4 rounded-xl
+                  font-bold text-lg transition-all
 
-                <button
-                  onClick={() =>
-                    setIsLogin(false)
+                  ${
+                    isLogin
+                      ? "bg-white text-green-700"
+                      : "text-white"
                   }
-                  className={`
-                    flex-1 py-4 rounded-xl
-                    font-bold text-lg transition-all
+                `}
+              >
+                Login
+              </button>
 
-                    ${
-                      !isLogin
-                        ? "bg-white text-green-700"
-                        : "text-white"
-                    }
-                  `}
-                >
-                  Register
-                </button>
-              </div>
-            )}
+              <button
+                onClick={() =>
+                  setIsLogin(false)
+                }
+                className={`
+                  flex-1 py-4 rounded-xl
+                  font-bold text-lg transition-all
+
+                  ${
+                    !isLogin
+                      ? "bg-white text-green-700"
+                      : "text-white"
+                  }
+                `}
+              >
+                Register
+              </button>
+            </div>
 
             <div className="mt-10">
+
               <AnimatePresence mode="wait">
-                {isForgotRoute ? (
-                  <motion.form
-                    key="forgot"
-                    initial={{
-                      opacity: 0,
-                      x: 50,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      x: 0,
-                    }}
-                    exit={{
-                      opacity: 0,
-                      x: -50,
-                    }}
-                    transition={{
-                      duration: 0.4,
-                    }}
-                    onSubmit={
-                      handleForgotPassword
-                    }
-                    className="space-y-6"
-                  >
-                    <div
-                      className="
-                      flex items-center gap-4
-                      bg-white/10
-                      border border-white/10
-                      rounded-2xl
-                      px-5 py-5
-                    "
-                    >
-                      <Mail className="text-green-200 w-6 h-6" />
 
-                      <input
-                        type="email"
-                        placeholder="Enter your email"
-                        required
-                        value={forgotEmail}
-                        onChange={(e) =>
-                          setForgotEmail(
-                            e.target.value
-                          )
-                        }
-                        className="
-                        bg-transparent
-                        outline-none
-                        text-white
-                        w-full
-                        text-lg
-                        placeholder:text-green-100
-                      "
-                      />
-                    </div>
+                {isLogin ? (
 
-                    <AnimatedButton
-                      type="submit"
-                      loading={loading}
-                    >
-                      Send Reset Link
-                      <Send className="w-5 h-5" />
-                    </AnimatedButton>
-
-                    <div className="text-center">
-                      <Link
-                        to="/login"
-                        className="
-                        text-green-100
-                        hover:text-white
-                        transition-all
-                      "
-                      >
-                        Back to Login
-                      </Link>
-                    </div>
-                  </motion.form>
-                ) : isLogin ? (
                   <motion.form
                     key="login"
                     initial={{
@@ -442,6 +357,7 @@ function AuthPage() {
                     onSubmit={handleLogin}
                     className="space-y-6"
                   >
+
                     <div className="flex items-center gap-4 bg-white/10 border border-white/10 rounded-2xl px-5 py-5">
                       <Mail className="text-green-200 w-6 h-6" />
 
@@ -485,27 +401,27 @@ function AuthPage() {
                     <div className="flex justify-end">
                       <Link
                         to="/forgot-password"
-                        className="
-                        text-green-100
-                        hover:text-white
-                        transition-all
-                        text-sm
-                        font-medium
-                      "
+                        className="text-green-100 hover:text-white transition-all text-sm font-medium"
                       >
                         Forgot Password?
                       </Link>
                     </div>
 
-                    <AnimatedButton
+                    <button
                       type="submit"
-                      loading={loading}
+                      disabled={loading}
+                      className="w-full bg-white text-green-700 hover:bg-green-100 transition-all rounded-2xl py-5 font-bold text-lg flex items-center justify-center gap-3"
                     >
-                      Login
+                      {loading
+                        ? "Loading..."
+                        : "Login"}
+
                       <ArrowRight className="w-5 h-5" />
-                    </AnimatedButton>
+                    </button>
                   </motion.form>
+
                 ) : (
+
                   <motion.form
                     key="register"
                     initial={{
@@ -528,6 +444,7 @@ function AuthPage() {
                     }
                     className="space-y-6"
                   >
+
                     <div className="flex items-center gap-4 bg-white/10 border border-white/10 rounded-2xl px-5 py-5">
                       <User className="text-green-200 w-6 h-6" />
 
@@ -570,8 +487,6 @@ function AuthPage() {
                       />
                     </div>
 
-                   
-
                     <div className="flex items-center gap-4 bg-white/10 border border-white/10 rounded-2xl px-5 py-5">
                       <Lock className="text-green-200 w-6 h-6" />
 
@@ -593,13 +508,47 @@ function AuthPage() {
                       />
                     </div>
 
-                    <AnimatedButton
+                    <div className="flex items-center gap-4 bg-white/10 border border-white/10 rounded-2xl px-5 py-5">
+
+                      <User className="text-green-200 w-6 h-6" />
+
+                      <select
+                        value={registerData.role}
+                        onChange={(e) =>
+                          setRegisterData({
+                            ...registerData,
+                            role: e.target.value,
+                          })
+                        }
+                        className="bg-transparent outline-none text-white w-full text-lg"
+                      >
+                        <option
+                          value="user"
+                          className="text-black"
+                        >
+                          User
+                        </option>
+
+                        <option
+                          value="seller"
+                          className="text-black"
+                        >
+                          Seller
+                        </option>
+                      </select>
+                    </div>
+
+                    <button
                       type="submit"
-                      loading={loading}
+                      disabled={loading}
+                      className="w-full bg-white text-green-700 hover:bg-green-100 transition-all rounded-2xl py-5 font-bold text-lg flex items-center justify-center gap-3"
                     >
-                      Register
+                      {loading
+                        ? "Loading..."
+                        : "Register"}
+
                       <ArrowRight className="w-5 h-5" />
-                    </AnimatedButton>
+                    </button>
                   </motion.form>
                 )}
               </AnimatePresence>

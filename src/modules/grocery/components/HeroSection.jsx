@@ -77,7 +77,7 @@ function HeroSection() {
         </motion.div>
       </AnimatePresence>
 
-      {/* Content */}
+      
       <div className="absolute inset-0 flex items-center justify-center text-center text-white px-6">
         <motion.div
           initial={{ y: 30, opacity: 0 }}

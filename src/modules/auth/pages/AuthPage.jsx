@@ -20,9 +20,12 @@ import {
   loginUser,
   registerUser,
 } from "../api/authApi";
+import { setUser } from "../slices/authSlice";
+import { useDispatch } from "react-redux";
 
 function AuthPage() {
 
+  const dispatch = useDispatch();
   const location = useLocation();
 
   const navigate = useNavigate();
@@ -60,17 +63,20 @@ function AuthPage() {
       };
 
       const response = await loginUser(payload);
-
-      localStorage.setItem(
-        "token",
-        response.token
-      );
-
+      
+      
+   
       localStorage.setItem(
         "user",
         JSON.stringify(response.user)
       );
 
+	  console.log("checking response",response)
+     
+	  dispatch(setUser({
+       "user":response.user,
+	//    "token":response.token
+	  }))
       navigate(
         response.user.role === "admin"
           ? "/admin"

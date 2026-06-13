@@ -1,3 +1,5 @@
+
+
 import React, {
   useEffect,
   useState,
@@ -9,17 +11,35 @@ import {
 } from "lucide-react";
 
 import UserProductCard from "../components/UserProduct";
+
 import { getAllProducts } from "../../admin/api/productApi";
 
+import {
+  useDispatch,
+  useSelector,
+} from "react-redux";
+
+import {
+  addCartItem,
+} from "../../cart/slices/cartSlice";
 
 function GroceryProducts() {
 
   const [products, setProducts] =
     useState([]);
 
-  const [filteredProducts,
-    setFilteredProducts] =
-    useState([]);
+  const dispatch =
+    useDispatch();
+
+  const { loading: cartLoading } =
+    useSelector(
+      (state) => state.cart
+    );
+
+  const [
+    filteredProducts,
+    setFilteredProducts,
+  ] = useState([]);
 
   const [loading, setLoading] =
     useState(true);
@@ -89,25 +109,45 @@ function GroceryProducts() {
     }
   }, [search, products]);
 
-  const handleAddToCart = (
-    product
-  ) => {
+  const handleAddToCart =
+    (product) => {
 
-    console.log(
-      "Added to cart:",
-      product
-    );
+      dispatch(
+        addCartItem({
+		
+		  userId:product?.userId,
+          productId:
+            product._id,
 
-    alert(
-      `${product.name} added to cart`
-    );
-  };
+          name:
+            product.name,
+
+          price:
+            product.discountPercentage >
+            0
+              ? Math.round(
+                  product.price -
+                    (product.price *
+                      product.discountPercentage) /
+                      100
+                )
+              : product.price,
+
+          image:
+            product.images?.[0]
+              ?.url,
+
+          quantity: 1,
+        })
+      );
+    };
 
   if (loading) {
     return (
       <div
         className="min-h-screen
-        flex items-center justify-center
+        flex items-center
+        justify-center
         text-3xl font-bold
         text-green-600"
       >
@@ -174,9 +214,12 @@ function GroceryProducts() {
             </div>
 
             <div
-              className="bg-white rounded-2xl
-              px-5 py-4 flex items-center
-              shadow-xl lg:w-[420px]"
+              className="bg-white
+              rounded-2xl
+              px-5 py-4
+              flex items-center
+              shadow-xl
+              lg:w-[420px]"
             >
 
               <Search
@@ -193,7 +236,8 @@ function GroceryProducts() {
                     e.target.value
                   )
                 }
-                className="w-full outline-none
+                className="w-full
+                outline-none
                 text-gray-700"
               />
             </div>
@@ -242,10 +286,17 @@ function GroceryProducts() {
               (product) => (
 
                 <UserProductCard
-                  key={product._id}
-                  product={product}
+                  key={
+                    product._id
+                  }
+                  product={
+                    product
+                  }
                   onAddToCart={
                     handleAddToCart
+                  }
+                  cartLoading={
+                    cartLoading
                   }
                 />
               )

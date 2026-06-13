@@ -1,4 +1,3 @@
-// src/modules/auth/api/auth.api.js
 
 import axios from "axios";
 
@@ -11,23 +10,10 @@ const authApi = axios.create({
   },
 });
 
-authApi.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
+export const registerUser = async (
+  data
+) => {
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    return config;
-  },
-
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-export const registerUser = async (data) => {
   const response = await authApi.post(
     "/register",
     data
@@ -37,6 +23,7 @@ export const registerUser = async (data) => {
 };
 
 export const loginUser = async (data) => {
+
   const response = await authApi.post(
     "/login",
     data
@@ -45,7 +32,10 @@ export const loginUser = async (data) => {
   return response.data;
 };
 
-export const forgotPassword = async (data) => {
+export const forgotPassword = async (
+  data
+) => {
+
   const response = await authApi.post(
     "/forgot-password",
     data
@@ -54,20 +44,20 @@ export const forgotPassword = async (data) => {
   return response.data;
 };
 
-
 export const resetPassword = async (
   data
 ) => {
-  const response =
-    await authApi.post(
-      "/reset-password",
-      data
-    );
+
+  const response = await authApi.post(
+    "/reset-password",
+    data
+  );
 
   return response.data;
 };
 
 export const getCurrentUser = async () => {
+
   const response = await authApi.get(
     "/me"
   );
@@ -76,11 +66,10 @@ export const getCurrentUser = async () => {
 };
 
 export const logoutUser = async () => {
+
   const response = await authApi.post(
     "/logout"
   );
-
-  localStorage.removeItem("token");
 
   localStorage.removeItem("user");
 

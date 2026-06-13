@@ -14,6 +14,9 @@ import AdminLayout from "./layouts/AdminLayout";
 import MyProducts from "./modules/admin/pages/MyProducts";
 import EditProduct from "./modules/admin/pages/EditProduct";
 import GroceryProducts from "./modules/grocery/pages/GroceryProducts";
+import CartPage from "./modules/cart/pages/Cart";
+import CheckoutPage from "./modules/checkout/pages/CheckOut";
+import MyOrdersPage from "./modules/checkout/pages/MyOrders";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +30,18 @@ const router = createBrowserRouter([
 	  {
 		path:"/all-products",
 		element:<GroceryProducts/>
+	  },
+	  {
+		path:'/cart',
+		element:<CartPage/>
+	  },
+	  {
+		path:'/checkout',
+		element:<CheckoutPage/>
+	  },
+	  {
+		path:"/my-orders",
+		element:<MyOrdersPage/>
 	  }
     ],
   },

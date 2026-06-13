@@ -1,19 +1,8 @@
-
 import axios from "axios";
 
 const productApi = axios.create({
   baseURL: "http://localhost:5001/api/products",
-});
-
-productApi.interceptors.request.use((config) => {
-
-  const token = localStorage.getItem("token");
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
-  return config;
+  withCredentials: true,
 });
 
 export const createProduct = async (formData) => {
@@ -45,7 +34,10 @@ export const getSingleProduct = async (id) => {
   return response.data;
 };
 
-export const updateProduct = async (id, formData) => {
+export const updateProduct = async (
+  id,
+  formData
+) => {
 
   const response = await productApi.put(
     `/${id}`,
@@ -62,7 +54,9 @@ export const updateProduct = async (id, formData) => {
 
 export const deleteProduct = async (id) => {
 
-  const response = await productApi.delete(`/${id}`);
+  const response = await productApi.delete(
+    `/${id}`
+  );
 
   return response.data;
 };
@@ -75,6 +69,5 @@ export const getMyProducts = async () => {
 
   return response.data;
 };
-
 
 export default productApi;
